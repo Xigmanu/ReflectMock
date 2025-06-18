@@ -1,38 +1,46 @@
-﻿using ReflectMock.Reflection;
+﻿using System.Reflection;
+using ReflectMock.Reflection;
 
 namespace ReflectMock;
 
 public sealed class MockTypeBuilder
 {
-    private readonly MockTypeInfo _mockInfo;
+    private string _name;
+    private TypeAttributes _typeAttributes;
+    private List<MockFieldInfo> _mockFields;
 
-    public MockTypeBuilder()
+    internal MockTypeBuilder(TypeAttributes typeAttributes)
     {
-        _mockInfo = new();
-    }
-
-    public MockTypeBuilder AccessModifiers(AccessModifiers modifiers)
-    {
-        _mockInfo.AccessModifiers = modifiers;
-        return this;
+        _name = string.Empty;
+        _typeAttributes = typeAttributes;
+        _mockFields = [];
     }
 
     public Type Build()
     {
-        return new MockTypeGenerator(_mockInfo).CreateType();
+        MockTypeInfo typeInfo = new(_name, _typeAttributes, [.. _mockFields]);
+        return new MockTypeGenerator(typeInfo).CreateType();
     }
 
     public MockTypeBuilder Name(string name)
     {
         ArgumentException.ThrowIfNullOrEmpty(name);
-        _mockInfo.Name = name;
+        _name = name;
         return this;
     }
 
-    public MockTypeBuilder WithField(MockFieldBuilder fieldBuilder)
+    public MockTypeBuilder Public()
     {
-        ArgumentNullException.ThrowIfNull(fieldBuilder);
-        _mockInfo.Fields.Add(fieldBuilder.Build());
+        _typeAttributes |= TypeAttributes.Public;
+        return this;
+    }
+
+    public MockTypeBuilder WithField(
+        Func<MockFieldBuilder, MockFieldBuilder> fieldBuilderConfigurator
+    )
+    {
+        MockFieldBuilder mockFieldBuilder = fieldBuilderConfigurator(new MockFieldBuilder());
+        _mockFields.Add(mockFieldBuilder.Build());
         return this;
     }
 }

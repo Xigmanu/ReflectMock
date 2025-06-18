@@ -1,42 +1,51 @@
-﻿namespace ReflectMock;
+﻿using System.Reflection;
+
+namespace ReflectMock;
 
 public sealed class MockFieldBuilder
 {
-    private readonly MockFieldInfo _fieldMockInfo;
+    private FieldAttributes _attributes;
+    private string _name;
+    private Type? _type;
 
-    public MockFieldBuilder()
+    internal MockFieldBuilder()
     {
-        _fieldMockInfo = new();
+        _name = string.Empty;
+    }
+
+    public MockFieldBuilder AutoProperty()
+    {
+        throw new NotImplementedException();
     }
 
     public MockFieldBuilder InitOnly()
     {
-        _fieldMockInfo.IsInitOnly = true;
+        _attributes |= FieldAttributes.InitOnly;
         return this;
     }
 
     public MockFieldBuilder Name(string name)
     {
         ArgumentException.ThrowIfNullOrEmpty(name);
-        _fieldMockInfo.Name = name;
+        _name = name;
         return this;
     }
 
     public MockFieldBuilder OfType(Type type)
     {
         ArgumentNullException.ThrowIfNull(type);
-        _fieldMockInfo.Type = type;
+        _type = type;
         return this;
     }
 
-    public MockFieldBuilder WithModifiers(AccessModifiers modifiers)
+    public MockFieldBuilder Public()
     {
-        _fieldMockInfo.Modifiers = modifiers;
+        _attributes |= FieldAttributes.Public;
         return this;
     }
 
     internal MockFieldInfo Build()
     {
-        return _fieldMockInfo;
+        return new MockFieldInfo(_name, _type, _attributes);
     }
 }

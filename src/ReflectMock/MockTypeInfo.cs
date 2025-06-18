@@ -1,8 +1,9 @@
-﻿namespace ReflectMock;
+﻿using System.Reflection;
 
-internal sealed class MockTypeInfo
-{
-    public AccessModifiers AccessModifiers { get; internal set; }
-    public List<MockFieldInfo> Fields { get; } = [];
-    public string Name { get; internal set; }
-}
+namespace ReflectMock;
+
+internal sealed record MockTypeInfo(
+    string Name,
+    TypeAttributes Attributes,
+    MockFieldInfo[] MockFields
+);
