@@ -1,9 +1,13 @@
-﻿namespace ReflectMock.Debug;
+﻿using ReflectMock.Reflection;
+using System.Reflection;
+
+namespace ReflectMock.Debug;
 
 internal class Program
 {
     static void Main(string[] args)
     {
+        /*
         Type mockedType = ReflectMock
             .Struct()
             .Name("Vector2")
@@ -11,5 +15,16 @@ internal class Program
             .WithField((f) => f.Name("x").OfType(typeof(float)).InitOnly().AutoProperty())
             .WithField((f) => f.Name("y").OfType(typeof(float)).InitOnly().AutoProperty())
             .Build();
+        */
+
+        MethodInfo methodInfo = typeof(Program).GetMethod("DoStuff")!;
+        MethodBodyInfo methodBodyInfo = new ILMethodBodyDisassembler(Assembly.GetExecutingAssembly()).Disassemble(methodInfo);
+    }
+
+    public static void DoStuff(int a)
+    {
+        Console.WriteLine($"a:{a}");
+        double b = Math.Pow(a, 2);
+        Console.WriteLine(b);
     }
 }
