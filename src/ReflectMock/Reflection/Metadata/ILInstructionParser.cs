@@ -248,7 +248,7 @@ internal static class ILInstructionParser
         for (int i = 0; i < il.Length; i++)
         {
             byte op = ilSpan[i];
-            if (bytesToSkip != 0 || i != 0 && ilSpan[i - 1] == MultiByteOpCodeHighByte)
+            if (bytesToSkip != 0)
             {
                 bytesToSkip--;
                 continue;
